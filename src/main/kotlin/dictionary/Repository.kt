@@ -26,11 +26,10 @@ object Repository {
                 val url = URI.create(urlString).toURL()
                 connection = (url.openConnection() as HttpURLConnection).apply {
                     addRequestProperty(HEADER_KEY, API_KEY)
+                    readTimeout = 5000
                 }
                 val response = connection.getInputStream().bufferedReader().readText()
                 json.decodeFromString<Definition>(response).mapDefinitionToList()
-            } catch (e: Exception) {
-                emptyList<String>()
             } finally {
                 connection?.disconnect()
             }

@@ -65,7 +65,7 @@ object Display {
     }
 
     init {
-        queries.consumeAsFlow()
+        queries.receiveAsFlow()
             .onEach {
                 state.emit(ScreenState.Loading)
             }
@@ -82,6 +82,11 @@ object Display {
                         state.emit(ScreenState.DefinitionLoaded(response))
                     }
                 }
+            }
+            .retry{
+                println(it)
+                state.emit(ScreenState.Error("Something wrong!"))
+                true
             }.launchIn(scope)
 
         state.onEach {
@@ -103,6 +108,11 @@ object Display {
 
                 is ScreenState.DefinitionLoaded -> {
                     resultArea.text = it.definitions.joinToString("\n\n")
+                    searchButton.isEnabled = true
+                }
+
+                is ScreenState.Error -> {
+                    resultArea.text = it.error
                     searchButton.isEnabled = true
                 }
             }
