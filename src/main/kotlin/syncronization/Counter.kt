@@ -27,8 +27,6 @@ class Counter {
         } finally {
             mutex.unlock()
         }
-
-        syn
     }
 
 }
